@@ -23,10 +23,13 @@ class Network:
         if self.last_recieve == '' or self.last_recieve == ' ':
             return
         if self.last_recieve.startswith("{"):
-            if json.loads(self.last_recieve)['id'] != self.player['id']:
-                self.other = json.loads(self.last_recieve)
 
-                print(self.other)
+            self.others = json.loads(self.last_recieve)
+            for _,value in self.others.items():
+                if value['id'] != self.player['id']:
+                    self.other = value
+
+
 
     def send(self, msg):
         try:
@@ -36,18 +39,19 @@ class Network:
             send_length += b' ' * (HEADER - len(send_length))
             self.client.send(send_length)
             self.client.send(message)
-            self.recieve(self.client.recv(2048).decode(FORMAT))
+            recieved = self.client.recv(1024).decode(FORMAT)
+            self.recieve(recieved)
         except:
-            print('send error')
+            # print('send error')
+            pass
 
     def set_self(self, player):
         self.player = player
-        self.send('setting')
         self.send(json.dumps(self.player))
 
     def get_other(self, id):
-        self.send('getting')
-        self.send(str(id))
+        self.set_self(self.player)
+
 
 
 class Game:

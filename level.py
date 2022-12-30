@@ -157,7 +157,7 @@ class Level():
                     y = (row_index)*TILESIZE
                     if col == '4':
                         Tile((x-500, y-500), [self.visible_sprites,self.obstacle_sprites], 'block')
-        self.player = Player((self.window_width/2, self.window_height/2), [self.visible_sprites], self.obstacle_sprites, self.create_bullet, self.create_particle, self.get_seconds, self.highest_kills)
+        self.player = Player((self.window_width/2, self.window_height/2), [self.visible_sprites], self.obstacle_sprites, self.create_bullet, self.create_particle, self.get_seconds, self.highest_kills, 'main')
 
     def create_bullet(self, pos, direction, rotation):
         Bullet(pos,[self.visible_sprites, self.bullets], direction, rotation, self.obstacle_sprites, self.create_kill_effect)
@@ -221,10 +221,9 @@ class Level():
         if self.network.other != '':
             self.other = self.network.other
             if not self.player2:
-                self.player2 = Player((self.other['pos'][0], self.other['pos'][1]), [self.visible_sprites], self.obstacle_sprites, self.create_bullet, self.create_particle, self.get_seconds, self.highest_kills)
+                self.player2 = Player((self.other['pos'][0], self.other['pos'][1]), [self.visible_sprites], self.obstacle_sprites, self.create_bullet, self.create_particle, self.get_seconds, self.highest_kills, 'other')
 
     def update_other(self):
-        print(self.player2)
         if self.player2:
             self.player2.rect.x = self.other['pos'][0]
             self.player2.rect.y = self.other['pos'][1]

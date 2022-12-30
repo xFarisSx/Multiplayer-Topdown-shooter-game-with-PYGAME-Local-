@@ -6,14 +6,15 @@ from settings import *
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos, groups, obstacle_sprites, create_bullet, create_particle, get_seconds, highest_kills):
+    def __init__(self,pos, groups, obstacle_sprites, create_bullet, create_particle, get_seconds, highest_kills, player_type):
         super().__init__(groups)
         self.display_surface = pygame.display.get_surface()
 
+        self.player_type = player_type
+
         self.obstacle_sprites = obstacle_sprites
-        self.image = pygame.Surface((TILESIZE, TILESIZE))
-        self.rect = self.image.get_rect(center=pos)
-        self.hitbox = self.rect
+        
+        
         self.direction = pygame.Vector2()
         self.speed = 400
         self.type = 'player'
@@ -28,7 +29,7 @@ class Player(pygame.sprite.Sprite):
             'bottom':False,
         }
 
-        self.prev_pos = self.hitbox
+        
 
         self.can_attack = True
 
@@ -37,6 +38,11 @@ class Player(pygame.sprite.Sprite):
 
         self.original_image = pygame.transform.rotozoom(pygame.image.load('square.png').convert_alpha(), 0, 1)
         self.original_rect = self.original_image.get_rect(center=pos)
+
+        self.image = self.original_image
+        self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect
+        self.prev_pos = self.hitbox
 
         self.create_bullet = create_bullet
         self.create_particle = create_particle
@@ -244,8 +250,9 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.dt = dt
-        self.cooldowns()
-        self.input()
-        self.move(dt)
+        if self.player_type != 'other':
+            self.cooldowns()
+            self.input()
+            self.move(dt)
 
-        self.draw_ui()
+            self.draw_ui()
