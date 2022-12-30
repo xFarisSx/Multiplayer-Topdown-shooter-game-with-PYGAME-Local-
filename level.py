@@ -185,9 +185,8 @@ class Level():
             self.time2enemy = pygame.time.get_ticks()
 
     def player_kill(self):
-        # self.player.kill()
-        # self.killed = True
-        pass
+        self.player.kill()
+        self.killed = True
             
 
     def cooldowns(self):
