@@ -16,5 +16,10 @@ with open('ourmap.csv', 'r') as file:
 
 MAPHEIGTH = len(MAP) * TILESIZE
 MAPWIDTH = len(MAP[0]) * TILESIZE
-print(MAPWIDTH, MAPHEIGTH)
-print(MAP)
+
+HEADER = 1024
+PORT = 5050
+SERVER = '192.168.56.1'
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = '!DISCONNECT'
+ADDR = (SERVER, PORT)

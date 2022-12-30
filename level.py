@@ -115,7 +115,10 @@ class YSortCameraGroup(pygame.sprite.Group):
 
 
 class Level():
-    def __init__(self, highest_kills):
+    def __init__(self, highest_kills, id):
+        if id:
+            self.id = id
+        else: self.id = random.randint(0,1000)
 
         self.display_surface = pygame.display.get_surface()
         self.window_height = self.display_surface.get_size()[1]
@@ -137,7 +140,14 @@ class Level():
         self.state = {}
 
         self.killed = False
-        
+
+        self.can_set = True
+        self.can_get = True
+        self.time2set = 0
+        self.time2get = 0
+        self.network = ''
+        self.other = ''
+        self.player2 = None
 
     def create_map(self):
         for row_index, row in enumerate(MAP):
@@ -175,8 +185,9 @@ class Level():
             self.time2enemy = pygame.time.get_ticks()
 
     def player_kill(self):
-        self.player.kill()
-        self.killed = True
+        # self.player.kill()
+        # self.killed = True
+        pass
             
 
     def cooldowns(self):
@@ -185,10 +196,43 @@ class Level():
         else:
             self.can_respone = False
 
+        # if pygame.time.get_ticks() - self.time2set > 0:
+        #     self.can_set = True
+        # else:
+        #     self.can_set = False
+        # if pygame.time.get_ticks() - self.time2get > 0:
+        #     self.can_get = True
+        # else:
+        #     self.can_get = False
+
     def get_seconds(self):
         return self.seconds
 
-    def run(self, dt, seconds):
+    def set_self(self):
+
+        player = {
+                'id':self.id,
+                'pos':(self.player.rect.x, self.player.rect.y)
+            }
+        self.network.set_self(player)
+
+    def get_other(self):
+
+        self.network.get_other(self.id)
+        if self.network.other != '':
+            self.other = self.network.other
+            if not self.player2:
+                self.player2 = Player((self.other['pos'][0], self.other['pos'][1]), [self.visible_sprites], self.obstacle_sprites, self.create_bullet, self.create_particle, self.get_seconds, self.highest_kills)
+
+    def update_other(self):
+        print(self.player2)
+        if self.player2:
+            self.player2.rect.x = self.other['pos'][0]
+            self.player2.rect.y = self.other['pos'][1]
+
+
+    def run(self, dt, seconds, network):
+        self.network = network
         if self.player.kills > self.highest_kills:
             self.highest_kills = self.player.kills
             self.player.highest_kills = self.highest_kills
@@ -199,6 +243,7 @@ class Level():
         self.cooldowns()
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update(dt)
-        
 
-
+        self.set_self()
+        self.get_other()
+        self.update_other()

@@ -1,14 +1,60 @@
-import pygame, sys, random
+import pygame, sys, random, json
 from settings import *
 from level import Level
 from ui import UI
+
+import socket
+import time
+class Network:
+    def __init__(self):
+
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect(ADDR)
+        self.recieves = []
+        self.last_recieve = ''
+        self.player = ''
+        self.other = ''
+
+    def recieve(self, msg):
+        self.recieves.append(msg)
+        self.last_recieve = self.recieves[-1]
+        if not self.last_recieve:
+            return 
+        if self.last_recieve == '' or self.last_recieve == ' ':
+            return
+        if self.last_recieve.startswith("{"):
+            if json.loads(self.last_recieve)['id'] != self.player['id']:
+                self.other = json.loads(self.last_recieve)
+
+                print(self.other)
+
+    def send(self, msg):
+        try:
+            message = msg.encode(FORMAT)
+            msg_length = len(message)
+            send_length = str(msg_length).encode(FORMAT)
+            send_length += b' ' * (HEADER - len(send_length))
+            self.client.send(send_length)
+            self.client.send(message)
+            self.recieve(self.client.recv(2048).decode(FORMAT))
+        except:
+            print('send error')
+
+    def set_self(self, player):
+        self.player = player
+        self.send('setting')
+        self.send(json.dumps(self.player))
+
+    def get_other(self, id):
+        self.send('getting')
+        self.send(str(id))
 
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGTH),  pygame.FULLSCREEN)
-        # self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
+        # self.screen = pygame.display.set_mode((WIDTH, HEIGTH),  pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
         pygame.display.set_caption('Shooter Game')
         self.clock = pygame.time.Clock()
         pygame.mixer.music.load('music.mp3')
@@ -18,17 +64,20 @@ class Game:
 
         self.running = True
         self.highest_kills = 0
-        self.level = Level(self.highest_kills)
+        self.level = Level(self.highest_kills, None)
         self.playing = False
         self.seconds = 0
         self.lastSecond = 0
         self.state = {}
+
+        self.network = Network()
 
     def run(self):
         while self.running:
             self.dt = self.clock.tick(60)/1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.network.send(DISCONNECT_MESSAGE)
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
@@ -39,18 +88,18 @@ class Game:
 
             self.playing = not self.ui.open
             if self.level.killed:
-                self.level = Level(self.highest_kills)
+                self.level = Level(self.highest_kills, self.level.id)
                 self.seconds = 0
             if self.playing:
                 self.ui.stop()
                 self.screen.fill('#863a3a')
                 if pygame.time.get_ticks() - self.lastSecond > 1000:
-                    print('wow')
                     self.seconds+=1
                     self.lastSecond = pygame.time.get_ticks()
                 if self.level.highest_kills > self.highest_kills:
                     self.highest_kills = self.level.highest_kills
-                self.level.run(self.dt, self.seconds)
+                self.level.run(self.dt, self.seconds, self.network)
+
 
             else:
                 self.screen.fill('#ff4242')
