@@ -26,7 +26,9 @@ class Network:
         if self.last_recieve.startswith("{"):
 
             self.others = json.loads(self.last_recieve)
-            for _,value in self.others.items():
+            for key,value in self.others.items():
+                if key == 'zombies':
+                    continue
                 if value['id'] != self.player['id']:
                     self.other = value
 

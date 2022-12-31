@@ -6,10 +6,11 @@ from settings import *
 import time
 
 HEADER = 1024
-PORT = 4040
-# SERVER = "192.168.56.1" # private
+PORT = 5050
+SERVER = "192.168.1.60" # private
 # SERVER = '88.228.26.225' # public
-SERVER = socket.gethostbyname(socket.gethostname())
+# SERVER = socket.gethostbyname(socket.gethostname())
+# SERVER = '127.0.0.1'
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = '!DISCONNECT'
