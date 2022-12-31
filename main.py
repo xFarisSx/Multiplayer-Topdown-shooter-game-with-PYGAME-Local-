@@ -2,6 +2,7 @@ import pygame, sys, random, json
 from settings import *
 from level import Level
 from ui import UI
+from enemy import Enemy
 
 import socket
 import time
@@ -51,6 +52,29 @@ class Network:
 
     def get_other(self, id):
         self.set_self(self.player)
+
+    def make_zombies(self, visible_sprites, obstacle_sprites, player_kill, create_particle,players, level):
+        self.level = level
+        self.player_kill = player_kill
+        self.create_particle = create_particle
+        self.visible_sprites = visible_sprites
+        self.obstacle_sprites = obstacle_sprites
+        self.players= players
+
+        x = random.randint(TILESIZE+32, MAPWIDTH - 600)
+        y = random.randint(TILESIZE+32, MAPHEIGTH - 500)
+
+        for sprite in self.visible_sprites:
+            if sprite.rect.colliderect(pygame.Rect(x - TILESIZE/2, y - TILESIZE/2, TILESIZE,TILESIZE)):
+                return
+
+        for player in [self.player, self.other]:
+            if player == '':
+                continue
+            if pygame.Rect(x- TILESIZE/2, y- TILESIZE/2, TILESIZE,TILESIZE).colliderect(pygame.Rect(player['pos'][0]-TILESIZE*8/2, player['pos'][1]- TILESIZE*8/2, TILESIZE*8,TILESIZE*8)):
+                return
+        print(self.players)
+        self.last_enemy = Enemy((x, y), [self.visible_sprites,self.obstacle_sprites], self.players[0], self.player_kill, self.obstacle_sprites, self.create_particle, self.level)
 
 
 

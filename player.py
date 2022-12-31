@@ -256,3 +256,6 @@ class Player(pygame.sprite.Sprite):
             self.move(dt)
 
             self.draw_ui()
+        if (pygame.time.get_ticks() - self.time2particle > 20):
+            self.create_particle(self)
+            self.time2particle = pygame.time.get_ticks()

@@ -149,6 +149,8 @@ class Level():
         self.other = ''
         self.player2 = None
 
+        self.zombies = []
+
     def create_map(self):
         for row_index, row in enumerate(MAP):
             for col_index, col in enumerate(row):
@@ -170,17 +172,25 @@ class Level():
 
 
     def respone_enemy(self):
-        if(self.can_respone):
-            x = random.randint(TILESIZE+32, MAPWIDTH - 600)
-            y = random.randint(TILESIZE+32, MAPHEIGTH - 500)
+        
+        # if(self.can_respone):
+        #     x = random.randint(TILESIZE+32, MAPWIDTH - 600)
+        #     y = random.randint(TILESIZE+32, MAPHEIGTH - 500)
 
-            for sprite in self.visible_sprites:
-                if sprite.rect.colliderect(pygame.Rect(x - TILESIZE/2, y - TILESIZE/2, TILESIZE,TILESIZE)):
-                    return
-            if pygame.Rect(x- TILESIZE/2, y- TILESIZE/2, TILESIZE,TILESIZE).colliderect(pygame.Rect(self.player.rect.x-TILESIZE*8/2, self.player.rect.y - TILESIZE*8/2, TILESIZE*8,TILESIZE*8)):
-                return
+        #     for sprite in self.visible_sprites:
+        #         if sprite.rect.colliderect(pygame.Rect(x - TILESIZE/2, y - TILESIZE/2, TILESIZE,TILESIZE)):
+        #             return
+        #     if pygame.Rect(x- TILESIZE/2, y- TILESIZE/2, TILESIZE,TILESIZE).colliderect(pygame.Rect(self.player.rect.x-TILESIZE*8/2, self.player.rect.y - TILESIZE*8/2, TILESIZE*8,TILESIZE*8)):
+        #         return
                     
-            Enemy((x, y), [self.visible_sprites,self.obstacle_sprites], self.player, self.player_kill, self.obstacle_sprites, self.create_particle)
+        #     Enemy((x, y), [self.visible_sprites,self.obstacle_sprites], self.player, self.player_kill, self.obstacle_sprites, self.create_particle)
+        #     self.can_respone = False
+        #     self.time2enemy = pygame.time.get_ticks()
+
+        if(self.can_respone):
+
+            self.network.make_zombies(self.visible_sprites, self.obstacle_sprites, self.player_kill, self.create_particle, [self.player, self.player2], self)
+
             self.can_respone = False
             self.time2enemy = pygame.time.get_ticks()
 

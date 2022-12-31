@@ -6,7 +6,7 @@ from settings import *
 import time
 
 HEADER = 1024
-PORT = 5050
+PORT = 4040
 # SERVER = "192.168.56.1" # private
 # SERVER = '88.228.26.225' # public
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -18,7 +18,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
 players = {
-	
+	'zombies': []
 }
 conns = []
 

@@ -1,11 +1,13 @@
 from random import choice
+import random
 import pygame, math
 from settings import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self,pos, groups, player, player_kill, obstacle_sprites, create_particle):
+    def __init__(self,pos, groups, player, player_kill, obstacle_sprites, create_particle, level):
         super().__init__(groups)
-
+        self.level = level
+        self.id = random.randint(0,1000)
         self.display_surface = pygame.display.get_surface()
 
         self.obstacle_sprites = obstacle_sprites
@@ -49,7 +51,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health2_rect_width = self.health
         self.health2_rect_color = pygame.Color(249, 78, 78)
         self.health2_rect = pygame.Rect(self.offset_pos.x - self.health_rect_width/6, self.offset_pos.y - self.health2_rect_height, self.health2_rect_width, self.health2_rect_height)
-
+        self.level.zombies.append(self)
     def move(self, dt):
         self.prev_pos = self.hitbox.center
         player_x1, player_y1 = self.player.hitbox.center
