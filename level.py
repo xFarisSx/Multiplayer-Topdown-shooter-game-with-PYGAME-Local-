@@ -150,6 +150,7 @@ class Level():
         self.player2 = None
 
         self.zombies = []
+        self.zom_ids = []
 
     def create_map(self):
         for row_index, row in enumerate(MAP):
@@ -187,12 +188,27 @@ class Level():
         #     self.can_respone = False
         #     self.time2enemy = pygame.time.get_ticks()
 
+        # if self.zombies == []:
+        #     if self.network.zombies != []:
+        #         for zom in self.network.zombies:
+        #             Enemy(zom['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zom['id'])
+
         if(self.can_respone):
 
             self.network.make_zombies(self.visible_sprites, self.obstacle_sprites, self.player_kill, self.create_particle, [self.player, self.player2], self)
 
             self.can_respone = False
             self.time2enemy = pygame.time.get_ticks()
+        
+
+
+    def update_zombies(self):
+        for zom in self.zombies:
+            for i,network_zom in enumerate(self.network.zombies):
+                if network_zom['id'] == zom.id:
+                    self.network.zombies[i]['pos'] = zom.rect.topleft
+                    self.network.zombies[i]['killed'] = zom.killed
+
 
     def player_kill(self):
         self.player.kill()
@@ -255,3 +271,5 @@ class Level():
         self.set_self()
         self.get_other()
         self.update_other()
+        self.update_zombies()
+        

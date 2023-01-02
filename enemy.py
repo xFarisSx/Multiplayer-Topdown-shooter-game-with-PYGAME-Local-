@@ -4,10 +4,11 @@ import pygame, math
 from settings import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self,pos, groups, player, player_kill, obstacle_sprites, create_particle, level):
+    def __init__(self,pos, groups, player,player2,  player_kill, obstacle_sprites, create_particle, level, id):
         super().__init__(groups)
         self.level = level
-        self.id = random.randint(0,1000)
+        self.id = id
+        self.level.zom_ids.append(self.id)
         self.display_surface = pygame.display.get_surface()
 
         self.obstacle_sprites = obstacle_sprites
@@ -28,11 +29,14 @@ class Enemy(pygame.sprite.Sprite):
 
         self.time2particle = pygame.time.get_ticks()
         self.health = 100
+        self.killed = False
 
         
         # self.hitbox = self.rect.inflate(0, -10)
         # self.image.fill('green')
         self.player = player
+        self.player2 =player2
+        self.players = [self.player, self.player2]
 
         self.player_kill = player_kill
 
@@ -135,6 +139,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def checkDied(self, dt):
         if self.health <= 0.1:
+            self.killed = True
             self.kill()
             self.player.kills+=1
 

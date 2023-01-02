@@ -18,8 +18,13 @@ DISCONNECT_MESSAGE = '!DISCONNECT'
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
-players = {
-	'zombies': []
+state = {
+	'players':{
+
+	},
+	'zombies': {
+		'ids': []
+	}
 }
 conns = []
 
@@ -36,11 +41,24 @@ def handle_client(conn, addr):
 			if msg == DISCONNECT_MESSAGE:
 				connected = False
 
-			player_obj = json.loads(msg)
-			players[player_obj['id']] = player_obj
+			updates = json.loads(msg)
+			state['players'][updates['player']['id']] = updates['player']
+			if updates['zombies'] != []:
+				for zom in updates['zombies']:
+					
+
+					if not (zom['id'] in state['zombies']['ids']):
+						state['zombies']['ids'].append(zom['id'])
+					state['zombies'][zom['id']] = zom
+					if zom['killed']:
+						del state['zombies'][zom['id']]
+						state['zombies']['ids'].remove(zom['id'])
+					
+
+
 			getting = False
 			for client in conns:
-				client.send( json.dumps(players).encode(FORMAT) )
+				client.send( json.dumps(state).encode(FORMAT) )
 
 
 			print(f'[{addr}] {msg}')

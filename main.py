@@ -15,6 +15,9 @@ class Network:
         self.last_recieve = ''
         self.player = ''
         self.other = ''
+        self.last_enemy = ''
+        self.zombies = []
+        self.first_zombie_done = False
 
     def recieve(self, msg):
         self.recieves.append(msg)
@@ -26,11 +29,37 @@ class Network:
         if self.last_recieve.startswith("{"):
 
             self.others = json.loads(self.last_recieve)
-            for key,value in self.others.items():
-                if key == 'zombies':
-                    continue
-                if value['id'] != self.player['id']:
-                    self.other = value
+            for id,zom in self.others['zombies'].items():
+                if self.first_zombie_done and id != 'ids':
+                    if not (id in self.level.zom_ids) and not zom['killed']:
+                        Enemy(zom['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, id)
+
+            for id , player in self.others['players'].items():
+                if self.player != '':
+                    if str(id) != str(self.player['id']):
+                        self.other = player 
+
+            for zom in self.zombies:
+                if not (zom['id'] in self.others['zombies']['ids'] ):
+                    for zombie in self.level.zombies:
+                        if zombie.id == zom['id']:
+                            self.level.zombies.remove(zombie)
+                            zombie.kill()
+                    self.zombies.remove(zom)
+
+            # for key,value in self.others.items():
+            #     if key == 'zombies':
+            #         for zom_id, server_zom in value.items():
+            #             if not (zom_id in self.level.zom_ids):
+            #                 if self.first_zombie_done and not server_zom['killed']:
+            #                     Enemy(server_zom['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zom_id)
+                    
+            #     else:
+            #         for id, player in value.items():
+            #             if str(id) != str(self.player['id']):
+            #                 self.other = player
+            #         print(key, value)
+
 
 
 
@@ -50,12 +79,17 @@ class Network:
 
     def set_self(self, player):
         self.player = player
-        self.send(json.dumps(self.player))
+        self.updates = {
+            'player':self.player,
+            'zombies': self.zombies
+        }
+        self.send(json.dumps(self.updates))
 
     def get_other(self, id):
         self.set_self(self.player)
 
     def make_zombies(self, visible_sprites, obstacle_sprites, player_kill, create_particle,players, level):
+        self.first_zombie_done = True
         self.level = level
         self.player_kill = player_kill
         self.create_particle = create_particle
@@ -76,7 +110,15 @@ class Network:
             if pygame.Rect(x- TILESIZE/2, y- TILESIZE/2, TILESIZE,TILESIZE).colliderect(pygame.Rect(player['pos'][0]-TILESIZE*8/2, player['pos'][1]- TILESIZE*8/2, TILESIZE*8,TILESIZE*8)):
                 return
         print(self.players)
-        self.last_enemy = Enemy((x, y), [self.visible_sprites,self.obstacle_sprites], self.players[0], self.player_kill, self.obstacle_sprites, self.create_particle, self.level)
+        self.last_enemy = {
+            'id': random.randint(1, 10000),
+            'pos':(x, y), 
+            'killed':False
+
+        }
+        self.zombies.append(self.last_enemy)
+
+        Enemy((x, y), [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, self.last_enemy['id'])
 
 
 
