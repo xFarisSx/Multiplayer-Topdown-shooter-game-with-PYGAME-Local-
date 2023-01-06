@@ -7,7 +7,7 @@ from enemy import Enemy
 import socket
 import time
 class Network:
-    def __init__(self):
+    def __init__(self, level):
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(ADDR)
@@ -18,6 +18,8 @@ class Network:
         self.last_enemy = ''
         self.zombies = []
         self.first_zombie_done = False
+        self.level = level
+        self.ids = []
 
     def recieve(self, msg):
         self.recieves.append(msg)
@@ -29,23 +31,63 @@ class Network:
         if self.last_recieve.startswith("{"):
 
             self.others = json.loads(self.last_recieve)
+            
+
+            # for zom in self.zombies:
+            #     for zombie in self.level.zombies:
+            #         if zombie.id == zom['id'] and zom['killed']:
+            #             self.level.zombies.remove(zombie)
+            #             zombie.kill()
+            #             self.level.zom_ids.remove(zom['id'])
+
+            for zom in self.zombies:
+                if not (zom['id'] in self.others['zombies']['ids'] ):
+                    self.zombies.remove(zom)
+                    self.ids.remove(zom['id'])
+                    for zombie in self.level.zombies:
+                        if zombie.id == zom['id']:
+                            self.level.zombies.remove(zombie)
+                            self.level.zom_ids.remove(zom['id'])
+                            
+                            
+            #                 print(self.level.zombies)
+            #                 print('killed')
+            #         self.zombies.remove(zom)
+            #         self.ids.remove(zom['id'])
+
             for id,zom in self.others['zombies'].items():
-                if self.first_zombie_done and id != 'ids':
+                if id != 'ids':
                     if not (id in self.level.zom_ids) and not zom['killed']:
                         Enemy(zom['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, id)
+                        self.last_enemy = {
+                            'id': id,
+                            'pos':zom['pos'], 
+                            'killed':False
 
+                            }
+                        
+                        for zombie in self.zombies:
+                            if not (zombie['id'] in self.ids):
+                                self.ids.append[zombie['id']]
+                        if not ( self.last_enemy['id'] in self.ids ):
+                            self.zombies.append(self.last_enemy)
+
+
+                    # elif zom['killed']:
+                    #     for zombie in self.level.zombies:
+                    #         if zombie.id == zom['id']:
+                    #             self.level.zombies.remove(zombie)
+                    #             self.level.zom_ids.remove(zom['id'])
+                    #             zombie.kill()
+                    #             print(self.level.zombies)
+                    #             print('killed')
+                    #     # self.zombies.remove(zom)
             for id , player in self.others['players'].items():
                 if self.player != '':
                     if str(id) != str(self.player['id']):
                         self.other = player 
 
-            for zom in self.zombies:
-                if not (zom['id'] in self.others['zombies']['ids'] ):
-                    for zombie in self.level.zombies:
-                        if zombie.id == zom['id']:
-                            self.level.zombies.remove(zombie)
-                            zombie.kill()
-                    self.zombies.remove(zom)
+
 
             # for key,value in self.others.items():
             #     if key == 'zombies':
@@ -88,9 +130,8 @@ class Network:
     def get_other(self, id):
         self.set_self(self.player)
 
-    def make_zombies(self, visible_sprites, obstacle_sprites, player_kill, create_particle,players, level):
+    def make_zombies(self, visible_sprites, obstacle_sprites, player_kill, create_particle,players):
         self.first_zombie_done = True
-        self.level = level
         self.player_kill = player_kill
         self.create_particle = create_particle
         self.visible_sprites = visible_sprites
@@ -117,6 +158,7 @@ class Network:
 
         }
         self.zombies.append(self.last_enemy)
+        self.ids.append(self.last_enemy['id'])
 
         Enemy((x, y), [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, self.last_enemy['id'])
 
@@ -136,13 +178,13 @@ class Game:
 
         self.running = True
         self.highest_kills = 0
-        self.level = Level(self.highest_kills, None)
+        self.level = Level(self.highest_kills, None, None)
         self.playing = False
         self.seconds = 0
         self.lastSecond = 0
         self.state = {}
 
-        self.network = Network()
+        self.network = Network(self.level)
 
     def run(self):
         while self.running:
@@ -159,8 +201,9 @@ class Game:
                         self.ui.restart = True
 
             self.playing = not self.ui.open
+            self.network.level = self.level 
             if self.level.killed:
-                self.level = Level(self.highest_kills, self.level.id)
+                self.level = Level(self.highest_kills, self.level.id, self.network)
                 self.seconds = 0
             if self.playing:
                 self.ui.stop()

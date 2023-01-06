@@ -56,9 +56,14 @@ class Enemy(pygame.sprite.Sprite):
         self.health2_rect_color = pygame.Color(249, 78, 78)
         self.health2_rect = pygame.Rect(self.offset_pos.x - self.health_rect_width/6, self.offset_pos.y - self.health2_rect_height, self.health2_rect_width, self.health2_rect_height)
         self.level.zombies.append(self)
+        self.directionMove2 = pygame.math.Vector2()
     def move(self, dt):
         self.prev_pos = self.hitbox.center
         player_x1, player_y1 = self.player.hitbox.center
+        if self.player2 != None:
+            player_x2, player_y2 = self.player2.hitbox.center
+            self.directionMove2 = pygame.math.Vector2(player_x2 - self.rect.centerx, player_y2 - self.rect.centery)
+        print(self.player2)
 
         player_x, player_y = self.player.offset_pos
         rel_x, rel_y = player_x - self.offset_pos.x, player_y - self.offset_pos.y
@@ -82,6 +87,9 @@ class Enemy(pygame.sprite.Sprite):
 
 
         self.directionMove = pygame.math.Vector2(player_x1 - self.rect.centerx, player_y1 - self.rect.centery)
+        if self.player2:
+            if self.directionMove.magnitude() > self.directionMove2.magnitude(): self.directionMove = self.directionMove2
+            else: self.directionMove = self.directionMove
         if self.directionMove.magnitude() != 0:
             self.directionMove = self.directionMove.normalize()
 
@@ -136,6 +144,7 @@ class Enemy(pygame.sprite.Sprite):
         if (pygame.time.get_ticks() - self.time2particle > 30):
             self.create_particle(self)
             self.time2particle = pygame.time.get_ticks()
+
 
     def checkDied(self, dt):
         if self.health <= 0.1:

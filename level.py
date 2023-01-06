@@ -115,7 +115,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 
 
 class Level():
-    def __init__(self, highest_kills, id):
+    def __init__(self, highest_kills, id, network):
         if id:
             self.id = id
         else: self.id = random.randint(0,1000)
@@ -151,6 +151,7 @@ class Level():
 
         self.zombies = []
         self.zom_ids = []
+        self.network = network
 
     def create_map(self):
         for row_index, row in enumerate(MAP):
@@ -195,7 +196,7 @@ class Level():
 
         if(self.can_respone):
 
-            self.network.make_zombies(self.visible_sprites, self.obstacle_sprites, self.player_kill, self.create_particle, [self.player, self.player2], self)
+            self.network.make_zombies(self.visible_sprites, self.obstacle_sprites, self.player_kill, self.create_particle, [self.player, self.player2])
 
             self.can_respone = False
             self.time2enemy = pygame.time.get_ticks()
@@ -208,6 +209,7 @@ class Level():
                 if network_zom['id'] == zom.id:
                     self.network.zombies[i]['pos'] = zom.rect.topleft
                     self.network.zombies[i]['killed'] = zom.killed
+            zom.player2 = self.player2
 
 
     def player_kill(self):
@@ -272,4 +274,4 @@ class Level():
         self.get_other()
         self.update_other()
         self.update_zombies()
-        
+        print(self.zom_ids)

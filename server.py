@@ -45,15 +45,17 @@ def handle_client(conn, addr):
 			state['players'][updates['player']['id']] = updates['player']
 			if updates['zombies'] != []:
 				for zom in updates['zombies']:
-					
-
 					if not (zom['id'] in state['zombies']['ids']):
-						state['zombies']['ids'].append(zom['id'])
-					state['zombies'][zom['id']] = zom
-					if zom['killed']:
-						del state['zombies'][zom['id']]
-						state['zombies']['ids'].remove(zom['id'])
-					
+						if len(state['zombies'].items()) < 5:
+							state['zombies']['ids'].append(zom['id'])
+							state['zombies'][zom['id']] = zom
+					if (zom['id'] in state['zombies']['ids']):
+						state['zombies'][zom['id']] = zom
+					# if zom['killed']:
+					# 	del state['zombies'][zom['id']]
+					# 	state['zombies']['ids'].remove(zom['id'])
+					# 	print(state['zombies'])
+
 
 
 			getting = False
