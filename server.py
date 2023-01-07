@@ -7,7 +7,7 @@ import time
 
 HEADER = 512
 PORT = 5050
-SERVER = "192.168.1.60" # private
+SERVER = "192.168.1.63" # private
 # SERVER = '88.228.26.225' # public
 # SERVER = socket.gethostbyname(socket.gethostname())
 # SERVER = '127.0.0.1'
@@ -67,7 +67,7 @@ def handle_client(conn, addr):
 				client.send( json.dumps(state).encode(FORMAT) )
 
 
-			print(f'[{addr}] {msg}')
+			# print(f'[{addr}] {msg}')
 			# conn.send("Msg received".encode(FORMAT))
 		except:
 			# print('server error')

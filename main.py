@@ -35,7 +35,7 @@ class Network:
                 if self.player != '':
                     if str(id) != str(self.player['id']):
                         self.other = player 
-                        print(self.other)
+                        # print(self.other)
 
             # for zom in self.zombies:
             #     for zombie in self.level.zombies:
@@ -51,15 +51,15 @@ class Network:
             #                 self.level.zombies.remove(zombie)
             #                 self.level.zom_ids.remove(zom['id'])
             #                 zombie.kill()
-            #                 print(self.level.zombies)
-            #                 print('killed')
+                            # print(self.level.zombies)
+                            # print('killed')
             #         self.zombies.remove(zom)
 
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
                     if not (id in map(lambda zombie: zombie['id'], self.zombies)):
-                        print('wow')
+                        # print('wow')
                         self.last_enemy = {
                                 'id': id,
                                 'pos':zom['pos'], 
@@ -77,8 +77,8 @@ class Network:
                     #             self.level.zombies.remove(zombie)
                     #             self.level.zom_ids.remove(zom['id'])
                     #             zombie.kill()
-                    #             print(self.level.zombies)
-                    #             print('killed')
+                                # print(self.level.zombies)
+                                # print('killed')
                     #     # self.zombies.remove(zom)
             
 
@@ -95,7 +95,7 @@ class Network:
             #         for id, player in value.items():
             #             if str(id) != str(self.player['id']):
             #                 self.other = player
-            #         print(key, value)
+                    # print(key, value)
 
 
 
@@ -123,8 +123,10 @@ class Network:
             'player':self.player,
             'zombies': self.zombies
         }
-        thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
-        thread.start()
+        # thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
+        # thread.start()
+
+        Network.send(self, json.dumps(self.updates))
         
 
     def get_other(self, id):

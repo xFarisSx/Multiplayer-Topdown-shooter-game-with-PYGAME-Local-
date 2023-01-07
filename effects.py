@@ -113,10 +113,12 @@ class Particle(pygame.sprite.Sprite):
 					self.time2hide = pygame.time.get_ticks()
 
 		self.r -= 10*dt
-		self.target_rect = pygame.Rect(self.rect.center, (0, 0)).inflate((self.r * 2, self.r * 2))
 		self.rect = pygame.Rect(self.pos.x, self.pos.y, self.r, self.r)
+		self.target_rect = pygame.Rect(self.rect.center, (0, 0)).inflate((self.r * 2, self.r * 2))
+		
 		if self.r <= 0:
 			self.kill()
-		self.shape_surf = pygame.Surface(self.target_rect.size, pygame.SRCALPHA)
+		if self.target_rect.width > 1 and self.target_rect.height > 1:
+			self.shape_surf = pygame.Surface(self.target_rect.size, pygame.SRCALPHA)
 
 		self.cooldowns()
