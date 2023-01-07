@@ -123,8 +123,9 @@ class Network:
             'player':self.player,
             'zombies': self.zombies
         }
-        thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
-        thread.start()
+        # thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
+        # thread.start()
+        Network.send(self, json.dumps(self.updates))
         
 
     def get_other(self, id):
