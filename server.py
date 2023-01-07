@@ -68,7 +68,7 @@ def handle_client(conn, addr):
 				client.send( json.dumps(state).encode(FORMAT) )
 
 
-			print(f'[{addr}] {msg}')
+			# print(f'[{addr}] {msg}')
 			# conn.send("Msg received".encode(FORMAT))
 		except:
 			# print('server error')

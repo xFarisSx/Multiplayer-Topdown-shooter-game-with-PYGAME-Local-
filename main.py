@@ -35,7 +35,7 @@ class Network:
                 if self.player != '':
                     if str(id) != str(self.player['id']):
                         self.other = player 
-                        print(self.other)
+                        #(self.other)
 
             # for zom in self.zombies:
             #     for zombie in self.level.zombies:
@@ -51,15 +51,15 @@ class Network:
             #                 self.level.zombies.remove(zombie)
             #                 self.level.zom_ids.remove(zom['id'])
             #                 zombie.kill()
-            #                 print(self.level.zombies)
-            #                 print('killed')
+            #                 #(self.level.zombies)
+            #                 #('killed')
             #         self.zombies.remove(zom)
 
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
                     if not (id in map(lambda zombie: zombie['id'], self.zombies)):
-                        print('wow')
+                        #('wow')
                         self.last_enemy = {
                                 'id': id,
                                 'pos':zom['pos'], 
@@ -77,8 +77,8 @@ class Network:
                     #             self.level.zombies.remove(zombie)
                     #             self.level.zom_ids.remove(zom['id'])
                     #             zombie.kill()
-                    #             print(self.level.zombies)
-                    #             print('killed')
+                    #             #(self.level.zombies)
+                    #             #('killed')
                     #     # self.zombies.remove(zom)
             
 
@@ -95,7 +95,7 @@ class Network:
             #         for id, player in value.items():
             #             if str(id) != str(self.player['id']):
             #                 self.other = player
-            #         print(key, value)
+            #         #(key, value)
 
 
 
@@ -111,7 +111,7 @@ class Network:
             recieved = self.client.recv(1024).decode(FORMAT)
             self.recieve(recieved)
         except:
-            # print('send error')
+            # #('send error')
             pass
 
     def set_self(self, player):
