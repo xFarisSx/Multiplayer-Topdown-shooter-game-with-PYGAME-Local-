@@ -117,7 +117,7 @@ class Particle(pygame.sprite.Sprite):
 		self.rect = pygame.Rect(self.pos.x, self.pos.y, self.r, self.r)
 		if self.r <= 0:
 			self.kill()
-		if self.rect.target_rect.width > 0.1 and self.rect.target_rect.height > 0.1:
+		if self.target_rect.width > 0.1 and self.target_rect.height > 0.1:
 			self.shape_surf = pygame.Surface(self.target_rect.size, pygame.SRCALPHA)
 
 		self.cooldowns()
