@@ -63,7 +63,6 @@ class Enemy(pygame.sprite.Sprite):
         if self.player2 != None:
             player_x2, player_y2 = self.player2.hitbox.center
             self.directionMove2 = pygame.math.Vector2(player_x2 - self.rect.centerx, player_y2 - self.rect.centery)
-        print(self.player2)
 
         player_x, player_y = self.player.offset_pos
         rel_x, rel_y = player_x - self.offset_pos.x, player_y - self.offset_pos.y
@@ -144,6 +143,7 @@ class Enemy(pygame.sprite.Sprite):
         if (pygame.time.get_ticks() - self.time2particle > 30):
             self.create_particle(self)
             self.time2particle = pygame.time.get_ticks()
+
 
 
     def checkDied(self, dt):

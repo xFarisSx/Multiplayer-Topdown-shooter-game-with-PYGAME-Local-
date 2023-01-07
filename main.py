@@ -3,6 +3,7 @@ from settings import *
 from level import Level
 from ui import UI
 from enemy import Enemy
+import threading
 
 import socket
 import time
@@ -30,7 +31,11 @@ class Network:
         if self.last_recieve.startswith("{"):
 
             self.others = json.loads(self.last_recieve)
-            
+            for id , player in self.others['players'].items():
+                if self.player != '':
+                    if str(id) != str(self.player['id']):
+                        self.other = player 
+                        print(self.other)
 
             # for zom in self.zombies:
             #     for zombie in self.level.zombies:
@@ -53,7 +58,8 @@ class Network:
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
-                    if not (id in self.zombies.map(lambda zombie: zombie['id'])):
+                    if not (id in map(lambda zombie: zombie['id'], self.zombies)):
+                        print('wow')
                         self.last_enemy = {
                                 'id': id,
                                 'pos':zom['pos'], 
@@ -74,10 +80,7 @@ class Network:
                     #             print(self.level.zombies)
                     #             print('killed')
                     #     # self.zombies.remove(zom)
-            for id , player in self.others['players'].items():
-                if self.player != '':
-                    if str(id) != str(self.player['id']):
-                        self.other = player 
+            
 
 
 
@@ -96,8 +99,8 @@ class Network:
 
 
 
-
-    def send(self, msg):
+    @staticmethod
+    def send(self,msg):
         try:
             message = msg.encode(FORMAT)
             msg_length = len(message)
@@ -112,16 +115,18 @@ class Network:
             pass
 
     def set_self(self, player):
+        for zombie in self.zombies:
+            if not (zombie['id'] in self.level.zom_ids) and not zombie['killed']:
+                Enemy(zombie['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zombie['id'])
         self.player = player
         self.updates = {
             'player':self.player,
             'zombies': self.zombies
         }
-        self.send(json.dumps(self.updates))
-        for zombie in self.zombies:
-            if not (zombie['id'] in self.level.zom_ids) and not zombie['killed']:
-                Enemy(zombie['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zombie['id'])
-                
+        thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
+        thread.start()
+        
+
     def get_other(self, id):
         self.set_self(self.player)
         
@@ -146,7 +151,6 @@ class Network:
                 continue
             if pygame.Rect(x- TILESIZE/2, y- TILESIZE/2, TILESIZE,TILESIZE).colliderect(pygame.Rect(player['pos'][0]-TILESIZE*8/2, player['pos'][1]- TILESIZE*8/2, TILESIZE*8,TILESIZE*8)):
                 return
-        print(self.players)
         self.last_enemy = {
             'id': random.randint(1, 10000),
             'pos':(x, y), 
@@ -186,7 +190,7 @@ class Game:
             self.dt = self.clock.tick(60)/1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.network.send(DISCONNECT_MESSAGE)
+                    self.network.send(self.network ,DISCONNECT_MESSAGE)
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
