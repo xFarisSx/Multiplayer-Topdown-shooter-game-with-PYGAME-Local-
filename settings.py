@@ -17,6 +17,7 @@ with open('ourmap.csv', 'r') as file:
 MAPHEIGTH = len(MAP) * TILESIZE
 MAPWIDTH = len(MAP[0]) * TILESIZE
 
+# SERVER = '192.168.1.60'
 HEADER = 512
 PORT = 5050
 SERVER = '192.168.1.63'
