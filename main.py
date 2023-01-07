@@ -19,7 +19,6 @@ class Network:
         self.zombies = []
         self.first_zombie_done = False
         self.level = level
-        self.ids = []
 
     def recieve(self, msg):
         self.recieves.append(msg)
@@ -40,37 +39,30 @@ class Network:
             #             zombie.kill()
             #             self.level.zom_ids.remove(zom['id'])
 
-            for zom in self.zombies:
-                if not (zom['id'] in self.others['zombies']['ids'] ):
-                    self.zombies.remove(zom)
-                    self.ids.remove(zom['id'])
-                    for zombie in self.level.zombies:
-                        if zombie.id == zom['id']:
-                            self.level.zombies.remove(zombie)
-                            self.level.zom_ids.remove(zom['id'])
-                            
-                            
+            # for zom in self.zombies:
+            #     if not (zom['id'] in self.others['zombies']['ids'] ):
+            #         for zombie in self.level.zombies:
+            #             if zombie.id == zom['id']:
+            #                 self.level.zombies.remove(zombie)
+            #                 self.level.zom_ids.remove(zom['id'])
+            #                 zombie.kill()
             #                 print(self.level.zombies)
             #                 print('killed')
             #         self.zombies.remove(zom)
-            #         self.ids.remove(zom['id'])
 
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
-                    if not (id in self.level.zom_ids) and not zom['killed']:
-                        Enemy(zom['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, id)
+                    
+                    if not (id in self.zombies.map(lambda zombie: zombie['id'])):
                         self.last_enemy = {
-                            'id': id,
-                            'pos':zom['pos'], 
-                            'killed':False
+                                'id': id,
+                                'pos':zom['pos'], 
+                                'killed':False
 
-                            }
-                        
-                        for zombie in self.zombies:
-                            if not (zombie['id'] in self.ids):
-                                self.ids.append[zombie['id']]
-                        if not ( self.last_enemy['id'] in self.ids ):
-                            self.zombies.append(self.last_enemy)
+                                }
+
+                        self.zombies.append(self.last_enemy)
+            
 
 
                     # elif zom['killed']:
@@ -126,9 +118,13 @@ class Network:
             'zombies': self.zombies
         }
         self.send(json.dumps(self.updates))
-
+        for zombie in self.zombies:
+            if not (zombie['id'] in self.level.zom_ids) and not zombie['killed']:
+                Enemy(zombie['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zombie['id'])
+                
     def get_other(self, id):
         self.set_self(self.player)
+        
 
     def make_zombies(self, visible_sprites, obstacle_sprites, player_kill, create_particle,players):
         self.first_zombie_done = True
@@ -158,7 +154,6 @@ class Network:
 
         }
         self.zombies.append(self.last_enemy)
-        self.ids.append(self.last_enemy['id'])
 
         Enemy((x, y), [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, self.last_enemy['id'])
 

@@ -215,6 +215,7 @@ class Level():
     def player_kill(self):
         self.player.kill()
         self.killed = True
+        # pass
             
 
     def cooldowns(self):

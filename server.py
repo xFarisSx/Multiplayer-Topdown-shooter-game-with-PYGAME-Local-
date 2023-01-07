@@ -5,7 +5,7 @@ import pygame, sys, random
 from settings import *
 import time
 
-HEADER = 1024
+HEADER = 512
 PORT = 5050
 SERVER = "192.168.1.60" # private
 # SERVER = '88.228.26.225' # public
@@ -40,17 +40,21 @@ def handle_client(conn, addr):
 			msg = conn.recv(msg_length).decode(FORMAT)
 			if msg == DISCONNECT_MESSAGE:
 				connected = False
-
+			# for id, zombie in state['zombies'].items():
+			# 	if id != 'ids':
+			# 		if zombie['killed']:
+			# 			del state['zombies'][id]
+			# 			state['zombies']['ids'].remove(id)
 			updates = json.loads(msg)
 			state['players'][updates['player']['id']] = updates['player']
 			if updates['zombies'] != []:
 				for zom in updates['zombies']:
+					
+
 					if not (zom['id'] in state['zombies']['ids']):
-						if len(state['zombies'].items()) < 5:
-							state['zombies']['ids'].append(zom['id'])
-							state['zombies'][zom['id']] = zom
-					if (zom['id'] in state['zombies']['ids']):
-						state['zombies'][zom['id']] = zom
+						state['zombies']['ids'].append(zom['id'])
+					state['zombies'][zom['id']] = zom
+					
 					# if zom['killed']:
 					# 	del state['zombies'][zom['id']]
 					# 	state['zombies']['ids'].remove(zom['id'])
