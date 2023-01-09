@@ -35,7 +35,6 @@ class Network:
                 if self.player != '':
                     if str(id) != str(self.player['id']):
                         self.other = player 
-                        #(self.other)
 
             # for zom in self.zombies:
             #     for zombie in self.level.zombies:
@@ -51,15 +50,19 @@ class Network:
             #                 self.level.zombies.remove(zombie)
             #                 self.level.zom_ids.remove(zom['id'])
             #                 zombie.kill()
-            #                 #(self.level.zombies)
-            #                 #('killed')
+
             #         self.zombies.remove(zom)
 
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
+<<<<<<< HEAD
                     if not (int(id) in map(lambda zombie: int(zombie['id']), self.zombies)):
                         #('wow')
+=======
+                    if not (id in map(lambda zombie: zombie['id'], self.zombies)):
+
+>>>>>>> 2b336dba78b165d17bd3dd85c53fa99058b53c12
                         self.last_enemy = {
                                 'id': int(id),
                                 'pos':zom['pos'], 
@@ -80,9 +83,7 @@ class Network:
                     #             self.level.zombies.remove(zombie)
                     #             self.level.zom_ids.remove(zom['id'])
                     #             zombie.kill()
-                    #             #(self.level.zombies)
-                    #             #('killed')
-                    #     # self.zombies.remove(zom)
+
             
 
 
@@ -98,7 +99,7 @@ class Network:
             #         for id, player in value.items():
             #             if str(id) != str(self.player['id']):
             #                 self.other = player
-            #         #(key, value)
+
 
 
 
