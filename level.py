@@ -219,7 +219,7 @@ class Level():
             
 
     def cooldowns(self):
-        if pygame.time.get_ticks() - self.time2enemy > 2000:
+        if pygame.time.get_ticks() - self.time2enemy > 5000:
             self.can_respone = True
         else:
             self.can_respone = False

@@ -58,16 +58,19 @@ class Network:
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
-                    if not (id in map(lambda zombie: zombie['id'], self.zombies)):
+                    if not (int(id) in map(lambda zombie: int(zombie['id']), self.zombies)):
                         #('wow')
                         self.last_enemy = {
-                                'id': id,
+                                'id': int(id),
                                 'pos':zom['pos'], 
-                                'killed':False
+                                'killed': zom['killed']
 
                                 }
 
                         self.zombies.append(self.last_enemy)
+                    for i,zombie in enumerate( self.zombies):
+                        if int(zombie['id']) == int(id):
+                            self.zombies[i] = zom
             
 
 
@@ -108,16 +111,24 @@ class Network:
             send_length += b' ' * (HEADER - len(send_length))
             self.client.send(send_length)
             self.client.send(message)
-            recieved = self.client.recv(1024).decode(FORMAT)
+            recieved = self.client.recv(10000).decode(FORMAT)
             self.recieve(recieved)
+            return
         except:
             # #('send error')
-            pass
+            return
 
     def set_self(self, player):
         for zombie in self.zombies:
             if not (zombie['id'] in self.level.zom_ids) and not zombie['killed']:
                 Enemy(zombie['pos'], [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, zombie['id'])
+        for zombie in self.zombies:
+            if zombie['killed']:
+                for zom in self.level.zombies:
+                    if int(zom.id) == int(zombie['id']):
+                        zom.kill()
+
+
         self.player = player
         self.updates = {
             'player':self.player,
@@ -125,6 +136,7 @@ class Network:
         }
         # thread = threading.Thread(target=Network.send, args=(self,json.dumps(self.updates)))
         # thread.start()
+
         Network.send(self, json.dumps(self.updates))
         
 
@@ -160,8 +172,8 @@ class Network:
         }
         self.zombies.append(self.last_enemy)
 
-        Enemy((x, y), [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, self.last_enemy['id'])
-
+        enemy = Enemy((x, y), [self.visible_sprites, self.obstacle_sprites], self.players[0],self.players[1],  self.player_kill, self.obstacle_sprites, self.create_particle, self.level, self.last_enemy['id'])
+        # self.level.minez.append(enemy)
 
 
 class Game:

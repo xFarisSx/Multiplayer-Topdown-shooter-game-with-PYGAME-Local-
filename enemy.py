@@ -7,8 +7,8 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self,pos, groups, player,player2,  player_kill, obstacle_sprites, create_particle, level, id):
         super().__init__(groups)
         self.level = level
-        self.id = id
-        self.level.zom_ids.append(self.id)
+        self.id = int(id)
+        self.level.zom_ids.append(int(self.id))
         self.display_surface = pygame.display.get_surface()
 
         self.obstacle_sprites = obstacle_sprites

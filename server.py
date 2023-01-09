@@ -5,10 +5,10 @@ import pygame, sys, random
 from settings import *
 import time
 
-HEADER = 512
-PORT = 5050
-SERVER = "192.168.1.63" # private
-# SERVER = "192.168.1.60" # private
+HEADER = 10000
+PORT = 5000
+# SERVER = "192.168.1.63" # private
+SERVER = "192.168.1.60" # private
 # SERVER = '88.228.26.225' # public
 # SERVER = socket.gethostbyname(socket.gethostname())
 # SERVER = '127.0.0.1'
@@ -53,8 +53,14 @@ def handle_client(conn, addr):
 					
 
 					if not (zom['id'] in state['zombies']['ids']):
-						state['zombies']['ids'].append(zom['id'])
-					state['zombies'][zom['id']] = zom
+						state['zombies']['ids'].append(int(zom['id']))
+						state['zombies'][zom['id']] = zom
+					else:
+						if not state['zombies'][zom['id']]['killed']:
+							state['zombies'][zom['id']] = zom
+						else:
+							state['zombies'][zom['id']]['killed'] = True
+
 					
 					# if zom['killed']:
 					# 	del state['zombies'][zom['id']]
@@ -67,7 +73,7 @@ def handle_client(conn, addr):
 			for client in conns:
 				client.send( json.dumps(state).encode(FORMAT) )
 
-
+			print(state)
 			# print(f'[{addr}] {msg}')
 			# conn.send("Msg received".encode(FORMAT))
 		except:
