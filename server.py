@@ -6,7 +6,7 @@ from settings import *
 import time
 
 HEADER = 10000
-PORT = 5050
+PORT = 6000
 # SERVER = "192.168.1.63" # private
 SERVER = "192.168.1.60" # private
 # SERVER = '88.228.26.225' # public

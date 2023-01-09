@@ -56,13 +56,8 @@ class Network:
             for id,zom in self.others['zombies'].items():
                 if id != 'ids':
                     
-<<<<<<< HEAD
                     if not (int(id) in map(lambda zombie: int(zombie['id']), self.zombies)):
-                        #('wow')
-=======
-                    if not (id in map(lambda zombie: zombie['id'], self.zombies)):
 
->>>>>>> 2b336dba78b165d17bd3dd85c53fa99058b53c12
                         self.last_enemy = {
                                 'id': int(id),
                                 'pos':zom['pos'], 
